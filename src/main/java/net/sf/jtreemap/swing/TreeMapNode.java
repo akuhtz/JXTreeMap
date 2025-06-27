@@ -32,9 +32,11 @@
  */
 package net.sf.jtreemap.swing;
 
-import javax.swing.tree.DefaultMutableTreeNode;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+
+import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
  * Node of a JXTreeMap.<BR>
@@ -180,7 +182,7 @@ public class TreeMapNode extends DefaultMutableTreeNode {
      */
     @SuppressWarnings("unchecked")
     public List<TreeMapNode> getChildren() {
-        return this.children;
+        return new ArrayList(this.children);
     }
 
     /**
