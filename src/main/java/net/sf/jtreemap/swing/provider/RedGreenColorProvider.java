@@ -42,6 +42,9 @@ import net.sf.jtreemap.swing.JXTreeMap;
 import net.sf.jtreemap.swing.TreeMapNode;
 import net.sf.jtreemap.swing.Value;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * ColorProvider who, with a max absolute value M, choose the color between
  * values -M and M.
@@ -50,6 +53,9 @@ import net.sf.jtreemap.swing.Value;
  */
 
 public class RedGreenColorProvider extends ColorProvider {
+
+    private static final Logger log = LoggerFactory.getLogger(RedGreenColorProvider.class);
+
     private static final int COLOUR_MAX_VALUE = 255;
 
     /**
@@ -130,17 +136,16 @@ public class RedGreenColorProvider extends ColorProvider {
             final Value value = root.getValue();
             if (value != null && (this.maxAbsValue == null || Math.abs(value.getValue()) > this.maxAbsValue.getValue())) {
                 try {
-                    final Class c = value.getClass();
+                    final Class<?> c = value.getClass();
                     if (this.maxAbsValue == null || this.minVal == null) {
-                        this.maxAbsValue = (Value) (c.newInstance());
-                        this.minVal = (Value) (c.newInstance());
+                        this.maxAbsValue = (Value) c.newInstance();
+                        this.minVal = (Value) c.newInstance();
                     }
                     this.minVal.setValue(-Math.abs(value.getValue()));
                     this.maxAbsValue.setValue(Math.abs(value.getValue()));
-                } catch (final IllegalAccessException iae) {
+                } catch (final IllegalAccessException | InstantiationException ie) {
                     // ignore
-                } catch (final InstantiationException ie) {
-                    // ignore
+                    log.error("Issue with max value", ie);
                 }
             }
         } else {

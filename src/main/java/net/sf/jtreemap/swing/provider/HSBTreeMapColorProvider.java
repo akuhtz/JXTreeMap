@@ -38,13 +38,18 @@ import java.util.Enumeration;
 
 import javax.swing.JPanel;
 
-import net.sf.jtreemap.swing.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.jtreemap.swing.ColorProvider;
+import net.sf.jtreemap.swing.DefaultValue;
 import net.sf.jtreemap.swing.JXTreeMap;
+import net.sf.jtreemap.swing.TreeMapNode;
+import net.sf.jtreemap.swing.Value;
 
 /**
- * An HSB color space color provider for JXTreeMap. Uses a specified function to
- * map the values onto the HSB color space. The default is a linear function,
- * but in my experience one of the logarithmic ones works best for this color
+ * An HSB color space color provider for JXTreeMap. Uses a specified function to map the values onto the HSB color
+ * space. The default is a linear function, but in my experience one of the logarithmic ones works best for this color
  * space.
  * 
  * @author Andy Adamczak
@@ -56,6 +61,8 @@ public class HSBTreeMapColorProvider extends ColorProvider {
      * 
      */
     private static final long serialVersionUID = 5009655580804320847L;
+
+    private static final Logger log = LoggerFactory.getLogger(HSBTreeMapColorProvider.class);
 
     /**
      * @author Andy Adamczak
@@ -77,7 +84,8 @@ public class HSBTreeMapColorProvider extends ColorProvider {
      * @param colorDistribution
      * @param color
      */
-    public HSBTreeMapColorProvider(final JXTreeMap treeMap, final ColorDistributionTypes colorDistribution, final Color color) {
+    public HSBTreeMapColorProvider(final JXTreeMap treeMap, final ColorDistributionTypes colorDistribution,
+        final Color color) {
         this(treeMap, colorDistribution, color, color);
     }
 
@@ -96,7 +104,8 @@ public class HSBTreeMapColorProvider extends ColorProvider {
      * @param positiveColor
      * @param negativeColor
      */
-    public HSBTreeMapColorProvider(final JXTreeMap treeMap, final ColorDistributionTypes colorDistribution, final Color positiveColor, final Color negativeColor) {
+    public HSBTreeMapColorProvider(final JXTreeMap treeMap, final ColorDistributionTypes colorDistribution,
+        final Color positiveColor, final Color negativeColor) {
         super();
         jTreeMap = treeMap;
         this.colorDistribution = colorDistribution;
@@ -118,7 +127,8 @@ public class HSBTreeMapColorProvider extends ColorProvider {
      * @param hue
      * @param saturation
      */
-    public HSBTreeMapColorProvider(final JXTreeMap treeMap, final ColorDistributionTypes colorDistribution, final float hue, final float saturation) {
+    public HSBTreeMapColorProvider(final JXTreeMap treeMap, final ColorDistributionTypes colorDistribution,
+        final float hue, final float saturation) {
         this(treeMap, colorDistribution, hue, saturation, hue, saturation);
     }
 
@@ -129,8 +139,8 @@ public class HSBTreeMapColorProvider extends ColorProvider {
      * @param negativeHue
      * @param negativeSaturation
      */
-    public HSBTreeMapColorProvider(final JXTreeMap treeMap, final float positiveHue, final float positiveSaturation, final float negativeHue,
-            final float negativeSaturation) {
+    public HSBTreeMapColorProvider(final JXTreeMap treeMap, final float positiveHue, final float positiveSaturation,
+        final float negativeHue, final float negativeSaturation) {
         this(treeMap, ColorDistributionTypes.Linear, positiveHue, positiveSaturation, negativeHue, negativeSaturation);
     }
 
@@ -142,8 +152,9 @@ public class HSBTreeMapColorProvider extends ColorProvider {
      * @param negativeHue
      * @param negativeSaturation
      */
-    public HSBTreeMapColorProvider(final JXTreeMap treeMap, final ColorDistributionTypes colorDistribution, final float positiveHue,
-            final float positiveSaturation, final float negativeHue, final float negativeSaturation) {
+    public HSBTreeMapColorProvider(final JXTreeMap treeMap, final ColorDistributionTypes colorDistribution,
+        final float positiveHue, final float positiveSaturation, final float negativeHue,
+        final float negativeSaturation) {
         super();
         jTreeMap = treeMap;
         this.colorDistribution = colorDistribution;
@@ -205,7 +216,8 @@ public class HSBTreeMapColorProvider extends ColorProvider {
      * @param negHue
      * @param negSaturation
      */
-    public void adjustColor(final float posHue, final float posSaturation, final float negHue, final float negSaturation) {
+    public void adjustColor(
+        final float posHue, final float posSaturation, final float negHue, final float negSaturation) {
         this.positiveHue = posHue;
         this.positiveSaturation = posSaturation;
         this.negativeHue = negHue;
@@ -248,8 +260,7 @@ public class HSBTreeMapColorProvider extends ColorProvider {
     }
 
     /**
-     * Given a value, maps that value to a new value using the specified math
-     * function
+     * Given a value, maps that value to a new value using the specified math function
      * 
      * @param value
      *            the value to convert
@@ -258,22 +269,22 @@ public class HSBTreeMapColorProvider extends ColorProvider {
     private double adjustValue(final double value) {
         double ret = value;
         switch (colorDistribution) {
-        case Log:
-            ret = Math.log1p(value);
-            break;
-        case Exp:
-            ret = Math.exp(value);
-            break;
-        case SquareRoot:
-            ret = Math.sqrt(value);
-            break;
-        case CubicRoot:
-            ret = Math.cbrt(value);
-            break;
-        default:
-            // Linear
-            ret = value;
-            break;
+            case Log:
+                ret = Math.log1p(value);
+                break;
+            case Exp:
+                ret = Math.exp(value);
+                break;
+            case SquareRoot:
+                ret = Math.sqrt(value);
+                break;
+            case CubicRoot:
+                ret = Math.cbrt(value);
+                break;
+            default:
+                // Linear
+                ret = value;
+                break;
         }
         return ret;
     }
@@ -292,39 +303,51 @@ public class HSBTreeMapColorProvider extends ColorProvider {
                 return;
             }
 
-            if (maxValue == null || value.getValue() >= maxValue.getValue()) {
-                try {
-                    final Class c = value.getClass();
-                    if (maxValue == null) {
-                        maxValue = (Value) (c.newInstance());
-                    }
-                    maxValue.setValue(value.getValue());
-                } catch (final IllegalAccessException iae) {
-                    // ignore
-                } catch (final InstantiationException ie) {
-                    // Ignore
-                    ie.printStackTrace();
-                }
-            }
-
-            if (minValue == null || value.getValue() <= minValue.getValue()) {
-                try {
-                    final Class c = value.getClass();
-                    if (minValue == null) {
-                        minValue = (Value) (c.newInstance());
-                    }
-                    minValue.setValue(value.getValue());
-                } catch (final IllegalAccessException iae) {
-                    // ignore
-                } catch (final InstantiationException ie) {
-                    // Ignore
-                    ie.printStackTrace();
-                }
-            }
-        } else {
+            setMaxValue(value);
+            setMinValue(value);
+        }
+        else {
             for (final Enumeration e = root.children(); e.hasMoreElements();) {
                 final TreeMapNode node = (TreeMapNode) e.nextElement();
                 setValues(node);
+            }
+        }
+    }
+
+    private void setMinValue(final Value value) {
+        if (minValue == null || value.getValue() <= minValue.getValue()) {
+            try {
+                final Class c = value.getClass();
+                if (minValue == null) {
+                    minValue = (Value) c.newInstance();
+                }
+                minValue.setValue(value.getValue());
+            }
+            catch (final IllegalAccessException iae) {
+                // ignore
+            }
+            catch (final InstantiationException ie) {
+                // Ignore
+                log.error("Instantiation Issue", ie);
+            }
+        }
+    }
+
+    private void setMaxValue(final Value value) {
+        if (maxValue == null || value.getValue() >= maxValue.getValue()) {
+            try {
+                final Class c = value.getClass();
+                if (maxValue == null) {
+                    maxValue = (Value) c.newInstance();
+                }
+                maxValue.setValue(value.getValue());
+            }
+            catch (final IllegalAccessException iae) {
+                // ignore
+            }
+            catch (final InstantiationException ie) {
+                // Ignore
+                log.error("Instantiation Issue", ie);
             }
         }
     }
@@ -354,11 +377,17 @@ public class HSBTreeMapColorProvider extends ColorProvider {
      */
     private class Legend extends JPanel {
         private static final int Y_INSET = 7;
+
         private static final int X_INSET = 15;
+
         private static final long serialVersionUID = 6371342387871103592L;
+
         private static final int HEIGHT = 20;
+
         private static final int WIDTH = 150;
+
         private static final int X = 20;
+
         private static final int Y = 25;
 
         /**
@@ -395,18 +424,14 @@ public class HSBTreeMapColorProvider extends ColorProvider {
     }
 }
 /*
- *                 ObjectLab is supporing JXTreeMap
+ * ObjectLab is supporing JXTreeMap
  * 
- * Based in London, we are world leaders in the design and development 
- * of bespoke applications for the securities financing markets.
+ * Based in London, we are world leaders in the design and development of bespoke applications for the securities
+ * financing markets.
  * 
- * <a href="http://www.objectlab.co.uk/open">Click here to learn more about us</a>
- *           ___  _     _           _   _          _
- *          / _ \| |__ (_) ___  ___| |_| |    __ _| |__
- *         | | | | '_ \| |/ _ \/ __| __| |   / _` | '_ \
- *         | |_| | |_) | |  __/ (__| |_| |__| (_| | |_) |
- *          \___/|_.__// |\___|\___|\__|_____\__,_|_.__/
- *                   |__/
+ * <a href="http://www.objectlab.co.uk/open">Click here to learn more about us</a> ___ _ _ _ _ _ / _ \| |__ (_) ___ ___|
+ * |_| | __ _| |__ | | | | '_ \| |/ _ \/ __| __| | / _` | '_ \ | |_| | |_) | | __/ (__| |_| |__| (_| | |_) |
+ * \___/|_.__// |\___|\___|\__|_____\__,_|_.__/ |__/
  *
- *                     www.ObjectLab.co.uk
+ * www.ObjectLab.co.uk
  */

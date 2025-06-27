@@ -97,7 +97,7 @@ public abstract class SplitStrategy implements Serializable {
             final int size = v.size();
 
             for (int i = 0; i < size; i++) {
-                d += (v.get(i)).getWeight();
+                d += v.get(i).getWeight();
             }
         }
         return d;
@@ -120,49 +120,12 @@ public abstract class SplitStrategy implements Serializable {
 
         // if the List contains only one element
         if (v.size() == 1) {
-            final TreeMapNode f = v.get(0);
-            if (f.isLeaf()) {
-                // if this is a leaf, we display with the border
-                int w = w0 - TreeMapNode.getBorder();
-                if (w < 0) {
-                    w = 0;
-                }
-                int h = h0 - TreeMapNode.getBorder();
-                if (h < 0) {
-                    h = 0;
-                }
-                f.setDimension(x0 + TreeMapNode.getBorder(), y0 + TreeMapNode.getBorder(), w, h);
-            } else {
-                // if this is not a leaf, calculation for the children
-                f.setDimension(x0, y0, w0, h0);
-
-                int bSub;
-                if (TreeMapNode.getBorder() > 1) {
-                    bSub = 2;
-                } else if (TreeMapNode.getBorder() == 1) {
-                    bSub = 1;
-                } else {
-                    bSub = 0;
-                }
-
-                int w = w0 - bSub;
-                if (w < 0) {
-                    w = 0;
-                }
-                int h = h0 - bSub;
-                if (h < 0) {
-                    h = 0;
-                }
-
-                TreeMapNode.setBorder(TreeMapNode.getBorder() - bSub);
-                calculatePositionsRec(x0 + bSub, y0 + bSub, w, h, weight0, f.getChildren());
-                TreeMapNode.setBorder(TreeMapNode.getBorder() + bSub);
-            }
+            calculatePositionRecForSingleElement(x0, y0, w0, h0, weight0, v);
         } else {
             // if there is more than one element
             // we split the List according to the selected strategy
-            final List<TreeMapNode> v1 = new ArrayList<TreeMapNode>();
-            final List<TreeMapNode> v2 = new ArrayList<TreeMapNode>();
+            final List<TreeMapNode> v1 = new ArrayList<>();
+            final List<TreeMapNode> v2 = new ArrayList<>();
             double weight1;
             double weight2; // poids des 2 vecteurs
             this.splitElements(v, v1, v2);
@@ -198,19 +161,61 @@ public abstract class SplitStrategy implements Serializable {
         }
     }
 
+    private void calculatePositionRecForSingleElement(final int x0, final int y0, final int w0, final int h0, final double weight0,
+            final List<TreeMapNode> v) {
+        final TreeMapNode f = v.get(0);
+        if (f.isLeaf()) {
+            // if this is a leaf, we display with the border
+            int w = w0 - TreeMapNode.getBorder();
+            if (w < 0) {
+                w = 0;
+            }
+            int h = h0 - TreeMapNode.getBorder();
+            if (h < 0) {
+                h = 0;
+            }
+            f.setDimension(x0 + TreeMapNode.getBorder(), y0 + TreeMapNode.getBorder(), w, h);
+        } else {
+            // if this is not a leaf, calculation for the children
+            f.setDimension(x0, y0, w0, h0);
+
+            int bSub;
+            if (TreeMapNode.getBorder() > 1) {
+                bSub = 2;
+            } else if (TreeMapNode.getBorder() == 1) {
+                bSub = 1;
+            } else {
+                bSub = 0;
+            }
+
+            int w = w0 - bSub;
+            if (w < 0) {
+                w = 0;
+            }
+            int h = h0 - bSub;
+            if (h < 0) {
+                h = 0;
+            }
+
+            TreeMapNode.setBorder(TreeMapNode.getBorder() - bSub);
+            calculatePositionsRec(x0 + bSub, y0 + bSub, w, h, weight0, f.getChildren());
+            TreeMapNode.setBorder(TreeMapNode.getBorder() + bSub);
+        }
+    }
+
     /**
      * Sort the elements by descending weight.
      * 
      * @param v
      *            List with the elements to be sorted
      */
-    protected void sortVector(final List<TreeMapNode> v) {
+    protected void sortList(final List<TreeMapNode> v) {
         TreeMapNode tmn;
         // we use the bubble sort
         for (int i = 0; i < v.size(); i++) {
             for (int j = v.size() - 1; j > i; j--) {
-                if ((v.get(j)).getWeight() > (v.get(j - 1)).getWeight()) {
-                    tmn = (v.get(j));
+                if (v.get(j).getWeight() > v.get(j - 1).getWeight()) {
+                    tmn = v.get(j);
                     v.set(j, v.get(j - 1));
                     v.set(j - 1, tmn);
                 }
@@ -235,7 +240,7 @@ public abstract class SplitStrategy implements Serializable {
                     memWeight += elemWeight;
                     v1.add(tmn);
                 } else {
-                    // we must have at least 1 element in the first vector
+                    // we must have at least 1 element in the first list
                     if (v1.isEmpty()) {
                         v1.add(tmn);
                     } else {
@@ -250,7 +255,7 @@ public abstract class SplitStrategy implements Serializable {
                     v2.add(tmn);
                 }
             } else {
-                // we add in the first vector while we don't reach the middle of
+                // we add in the first List while we don't reach the middle of
                 // weight
                 memWeight += elemWeight;
                 v1.add(tmn);

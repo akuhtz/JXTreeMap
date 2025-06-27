@@ -111,16 +111,7 @@ public class ZoomPopupMenu extends JPopupMenu {
                     // Separator
                     ZoomPopupMenu.this.addSeparator();
                 }
-                // children
-                cursor = orig;
-                while (cursor.getChild(e.getX(), e.getY()) != null) {
-                    final TreeMapNode child = cursor.getChild(e.getX(), e.getY());
-                    if (!child.isLeaf()) {
-                        final ZoomAction action = new ZoomAction(jTreeMap, child, ZOOM_ICON);
-                        ZoomPopupMenu.this.add(action);
-                    }
-                    cursor = child;
-                }
+                handleChildren(e, orig);
 
                 if (showAbout) {
                     // Separator
@@ -130,6 +121,20 @@ public class ZoomPopupMenu extends JPopupMenu {
                 }
 
                 ZoomPopupMenu.this.show(e.getComponent(), e.getX(), e.getY());
+            }
+        }
+
+        private void handleChildren(final MouseEvent e, final TreeMapNode orig) {
+            TreeMapNode cursor;
+            // children
+            cursor = orig;
+            while (cursor.getChild(e.getX(), e.getY()) != null) {
+                final TreeMapNode child = cursor.getChild(e.getX(), e.getY());
+                if (!child.isLeaf()) {
+                    final ZoomAction action = new ZoomAction(jTreeMap, child, ZOOM_ICON);
+                    ZoomPopupMenu.this.add(action);
+                }
+                cursor = child;
             }
         }
     }

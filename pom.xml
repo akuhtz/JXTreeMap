@@ -3,13 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.captmorgan</groupId>
+    <groupId>org.bidib.jbidib</groupId>
     <artifactId>jxtreemap</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>JXTreeMap</name>
-    <url>https://github.com/captmorgan/JXTreeMap</url>
+    <url>https://github.com/akuhtz/JXTreeMap</url>
     <inceptionYear>2005</inceptionYear>
 
     <properties>
@@ -26,19 +26,94 @@
 
     <description>TreeMap Visualization for Java Swing</description>
 
-    <issueManagement>
-        <system>GitHub</system>
-        <url>http://github.com/captmorgan/jxtreemap/issues</url>
-    </issueManagement>
-
     <scm>
-        <connection>scm:git:git@github.com:captmorgan/jxtreemap</connection>
-        <url>scm:git:git@github.com:captmorgan/jxtreemap</url>
+        <connection>scm:git:https://github.com/akuhtz/jxtreemap</connection>
+        <url>scm:git:https://github.com/akuhtz/jxtreemap</url>
 
-        <developerConnection>scm:git:git@github.com:captmorgan/jxtreemap</developerConnection>
+        <developerConnection>scm:git:https://github.com/akuhtz/jxtreemap</developerConnection>
     </scm>
 
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>central-portal-snapshots</id>
+            <name>Central Portal Snapshots Repository</name>
+			<url>https://central.sonatype.com/repository/maven-snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>central-portal-staging</id>
+            <name>Central Portal Staging Repository</name>
+			<url>https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
     <build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-clean-plugin</artifactId>
+                    <version>3.5.0</version>
+					<configuration>
+						<force>true</force>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.14.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>3.8.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>3.1.4</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-gpg-plugin</artifactId>
+					<version>3.2.7</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>3.1.3</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>3.4.2</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>3.11.2</version>
+					<configuration>
+						<doclint>none</doclint>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>3.3.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>3.3.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>3.5.3</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -52,6 +127,18 @@
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.36</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.36</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit-dep</artifactId>
@@ -78,58 +165,7 @@
         </dependency>
     </dependencies>
 
-
-    <repositories>
-        <repository>
-            <id>sonatype</id>
-            <url>http://maven.glassfish.org</url>
-        </repository>
-    </repositories>
-
-    <!--
-       <distributionManagement>
-          <repository>
-             <id>sourceforge.net</id>
-             <name>SourceForge</name>
-             <url>scpexe://ssh.sourceforge.net/home/groups/q/qa/qalab/htdocs/m2-repo</url>
-          </repository>
-          <snapshotRepository>
-             <id>sourceforge.net</id>
-             <name>SourceForge</name>
-             <url>scpexe://ssh.sourceforge.net/home/groups/q/qa/qalab/htdocs/m2-repo</url>
-          </snapshotRepository>
-          <site>
-             <id>sourceforge.net</id>
-             <name>SourceForge</name>
-             <url>scpexe://ssh.sourceforge.net/home/groups/q/qa/qalab/htdocs</url>
-          </site>
-       </distributionManagement>
-    -->
-
     <profiles>
-        <profile>
-            <id>site</id>
-            <reporting>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>findbugs-maven-plugin</artifactId>
-                        <version>2.3.2</version>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-pmd-plugin</artifactId>
-                        <version>2.5</version>
-                        <configuration>
-                            <linkXRef>true</linkXRef>
-                            <sourceEncoding>utf-8</sourceEncoding>
-                            <minimumTokens>100</minimumTokens>
-                            <targetJdk>1.5</targetJdk>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </reporting>
-        </profile>
 
         <profile>
             <id>release-profile</id>

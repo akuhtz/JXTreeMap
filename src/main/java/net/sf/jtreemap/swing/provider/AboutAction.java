@@ -24,6 +24,7 @@ class AboutAction extends AbstractAction {
      * 
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
+    @Override
     public void actionPerformed(final ActionEvent e) {
         JOptionPane.showMessageDialog(null, "<html>JXTreeMap powered by <a href=\"http://www.ObjectLab.co.uk\">ObjectLab.co.uk</a></html>");
     }

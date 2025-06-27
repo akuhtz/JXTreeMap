@@ -58,10 +58,15 @@ public class TreeMapNode extends DefaultMutableTreeNode {
     private static int border = DEFAULT_BORDER_SIZE;
 
     private int height;
+
     private Value value;
+
     private double weight = 0.0;
+
     private int width;
+
     private int x;
+
     private int y;
 
     /**
@@ -136,14 +141,16 @@ public class TreeMapNode extends DefaultMutableTreeNode {
     public TreeMapNode getActiveLeaf(final int xParam, final int yParam) {
 
         if (this.isLeaf()) {
-            if ((xParam >= this.getX()) && (xParam <= this.getX() + this.getWidth()) && (yParam >= this.getY()) && (yParam <= this.getY() + this.getHeight())) {
+            if ((xParam >= this.getX()) && (xParam <= this.getX() + this.getWidth()) && (yParam >= this.getY())
+                && (yParam <= this.getY() + this.getHeight())) {
                 return this;
             }
-        } else {
+        }
+        else {
             for (final Enumeration e = this.children(); e.hasMoreElements();) {
                 final TreeMapNode node = (TreeMapNode) (e.nextElement());
                 if ((xParam >= node.getX()) && (xParam <= node.getX() + node.getWidth()) && (yParam >= node.getY())
-                        && (yParam <= node.getY() + node.getHeight())) {
+                    && (yParam <= node.getY() + node.getHeight())) {
                     return node.getActiveLeaf(xParam, yParam);
                 }
             }
@@ -166,7 +173,7 @@ public class TreeMapNode extends DefaultMutableTreeNode {
             for (final Enumeration e = this.children(); e.hasMoreElements();) {
                 final TreeMapNode node = (TreeMapNode) (e.nextElement());
                 if ((xParam >= node.getX()) && (xParam <= node.getX() + node.getWidth()) && (yParam >= node.getY())
-                        && (yParam <= node.getY() + node.getHeight())) {
+                    && (yParam <= node.getY() + node.getHeight())) {
                     return node;
                 }
             }

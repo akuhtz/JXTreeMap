@@ -32,20 +32,13 @@
  */
 package net.sf.jtreemap.swing.example;
 
-import net.sf.jtreemap.swing.*;
-import net.sf.jtreemap.swing.provider.HSBTreeMapColorProvider;
-import net.sf.jtreemap.swing.provider.RandomColorProvider;
-import net.sf.jtreemap.swing.provider.RedGreenColorProvider;
-import net.sf.jtreemap.swing.provider.ZoomPopupMenu;
-
-import javax.swing.*;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.tree.DefaultTreeModel;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -54,6 +47,41 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.LinkedHashMap;
 import java.util.Locale;
+
+import javax.swing.BorderFactory;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTree;
+import javax.swing.KeyStroke;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.tree.DefaultTreeModel;
+
+import net.sf.jtreemap.swing.ColorProvider;
+import net.sf.jtreemap.swing.JXTreeMap;
+import net.sf.jtreemap.swing.SplitByNumber;
+import net.sf.jtreemap.swing.SplitBySlice;
+import net.sf.jtreemap.swing.SplitBySortedWeight;
+import net.sf.jtreemap.swing.SplitByWeight;
+import net.sf.jtreemap.swing.SplitSquarified;
+import net.sf.jtreemap.swing.SplitStrategy;
+import net.sf.jtreemap.swing.TreeMapNode;
+import net.sf.jtreemap.swing.provider.HSBTreeMapColorProvider;
+import net.sf.jtreemap.swing.provider.RandomColorProvider;
+import net.sf.jtreemap.swing.provider.RedGreenColorProvider;
+import net.sf.jtreemap.swing.provider.ZoomPopupMenu;
 
 /**
  * Test of JXTreeMap
@@ -130,8 +158,7 @@ public class JTreeMapExample extends JFrame implements ActionListener {
         /* uncomment if you want to keep proportions on zooming */
         // jTreeMap.setZoomKeepProportion(true);
         /*
-         * uncomment if you want to change the max border between two nodes of
-         * the same level
+         * uncomment if you want to change the max border between two nodes of the same level
          */
         // TreeMapNode.setBorder(5);
         // add a popup menu to zoom the JXTreeMap
@@ -140,7 +167,8 @@ public class JTreeMapExample extends JFrame implements ActionListener {
         // init GUI
         try {
             initGUI();
-        } catch (final Exception ex) {
+        }
+        catch (final Exception ex) {
             ex.printStackTrace();
         }
     }
@@ -162,6 +190,7 @@ public class JTreeMapExample extends JFrame implements ActionListener {
      * 
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
+    @Override
     public void actionPerformed(final ActionEvent e) {
         // Action performed for the File Menu @see addMenu()
 
@@ -177,9 +206,10 @@ public class JTreeMapExample extends JFrame implements ActionListener {
             }
             // create new colorProviders for the new TreeMap
             createColorProviders();
-            // then update the lengend panel
+            // then update the legend panel
             updateLegendPanel();
-        } else if (OPEN_TM3_FILE.equals(command)) {
+        }
+        else if (OPEN_TM3_FILE.equals(command)) {
             final JFileChooser chooser = new JFileChooser(System.getProperty("user.home"));
             final FileFilter filter = new TM3FileFilter();
             chooser.setFileFilter(filter);
@@ -192,7 +222,8 @@ public class JTreeMapExample extends JFrame implements ActionListener {
             // then update the lengend panel
             updateLegendPanel();
 
-        } else if (EXIT.equals(command)) {
+        }
+        else if (EXIT.equals(command)) {
             windowClosingEvent(null);
         }
     }
@@ -207,7 +238,8 @@ public class JTreeMapExample extends JFrame implements ActionListener {
         try {
             builderTM3 = new BuilderTM3(new File(path));
             setTM3Builder(builderTM3);
-        } catch (final IOException e) {
+        }
+        catch (final IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, e.getMessage(), "File error", JOptionPane.ERROR_MESSAGE);
         }
@@ -239,7 +271,8 @@ public class JTreeMapExample extends JFrame implements ActionListener {
             treeModel.setRoot(this.root);
 
             panelTM3.setVisible(false);
-        } catch (final ParseException e) {
+        }
+        catch (final ParseException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, e.getMessage(), "File error", JOptionPane.ERROR_MESSAGE);
         }
@@ -297,6 +330,7 @@ public class JTreeMapExample extends JFrame implements ActionListener {
         jScrollPane1.getViewport().add(this.treeView);
         jScrollPane1.setPreferredSize(new Dimension(SCROLLPANE_WIDTH, jTreeMap.getRoot().getHeight()));
         treeView.addTreeSelectionListener(new TreeSelectionListener() {
+            @Override
             public void valueChanged(final TreeSelectionEvent e) {
                 // for each selected elements ont the treeView, we zoom the
                 // JXTreeMap
@@ -345,6 +379,7 @@ public class JTreeMapExample extends JFrame implements ActionListener {
         gridBagConstraints.weightx = CONSTRAINT_WEIGHTX;
         choicePanel.add(this.cmbWeight, gridBagConstraints);
         cmbWeight.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(final ActionEvent e) {
                 final JComboBox cmb = (JComboBox) e.getSource();
                 final String field = (String) cmb.getSelectedItem();
@@ -371,6 +406,7 @@ public class JTreeMapExample extends JFrame implements ActionListener {
         gridBagConstraints.weighty = 1.0;
         choicePanel.add(this.cmbValue, gridBagConstraints);
         cmbValue.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(final ActionEvent e) {
                 final JComboBox cmb = (JComboBox) e.getSource();
                 final String field = (String) cmb.getSelectedItem();
@@ -384,16 +420,15 @@ public class JTreeMapExample extends JFrame implements ActionListener {
         panelTM3.setVisible(false);
     }
 
-
-    public void setWeight(String value){
+    public void setWeight(String value) {
         setCombo(cmbWeight, value);
     }
 
-    public void setValue(String value){
+    public void setValue(String value) {
         setCombo(cmbValue, value);
     }
 
-    private void setCombo(JComboBox combo, String value){
+    private void setCombo(JComboBox combo, String value) {
         combo.setSelectedItem(value);
     }
 
@@ -413,6 +448,7 @@ public class JTreeMapExample extends JFrame implements ActionListener {
         createStrategies();
 
         cmbStrategy.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(final ActionEvent e) {
                 updateStrategy();
             }
@@ -445,6 +481,7 @@ public class JTreeMapExample extends JFrame implements ActionListener {
         }
 
         cmbColorProvider.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(final ActionEvent e) {
                 if (JTreeMapExample.this.cmbColorProvider.getSelectedIndex() > -1) {
                     updateLegendPanel();
@@ -458,13 +495,21 @@ public class JTreeMapExample extends JFrame implements ActionListener {
     protected void createColorProviders() {
         colorProviders.put("Red Green", new RedGreenColorProvider(this.jTreeMap));
         colorProviders.put("Random", new RandomColorProvider(jTreeMap));
-        colorProviders.put("HSB linear", new HSBTreeMapColorProvider(jTreeMap, HSBTreeMapColorProvider.ColorDistributionTypes.Linear, Color.GREEN, Color.RED));
-        colorProviders.put("HSB log", new HSBTreeMapColorProvider(jTreeMap, HSBTreeMapColorProvider.ColorDistributionTypes.Log, Color.GREEN, Color.RED));
-        colorProviders.put("HSB SquareRoot", new HSBTreeMapColorProvider(jTreeMap, HSBTreeMapColorProvider.ColorDistributionTypes.SquareRoot, Color.GREEN,
-                Color.RED));
-        colorProviders.put("HSB CubicRoot", new HSBTreeMapColorProvider(jTreeMap, HSBTreeMapColorProvider.ColorDistributionTypes.CubicRoot, Color.GREEN,
-                Color.RED));
-        colorProviders.put("HSB exp", new HSBTreeMapColorProvider(jTreeMap, HSBTreeMapColorProvider.ColorDistributionTypes.Exp, Color.GREEN, Color.RED));
+        colorProviders
+            .put("HSB linear", new HSBTreeMapColorProvider(jTreeMap,
+                HSBTreeMapColorProvider.ColorDistributionTypes.Linear, Color.GREEN, Color.RED));
+        colorProviders
+            .put("HSB log", new HSBTreeMapColorProvider(jTreeMap, HSBTreeMapColorProvider.ColorDistributionTypes.Log,
+                Color.GREEN, Color.RED));
+        colorProviders
+            .put("HSB SquareRoot", new HSBTreeMapColorProvider(jTreeMap,
+                HSBTreeMapColorProvider.ColorDistributionTypes.SquareRoot, Color.GREEN, Color.RED));
+        colorProviders
+            .put("HSB CubicRoot", new HSBTreeMapColorProvider(jTreeMap,
+                HSBTreeMapColorProvider.ColorDistributionTypes.CubicRoot, Color.GREEN, Color.RED));
+        colorProviders
+            .put("HSB exp", new HSBTreeMapColorProvider(jTreeMap, HSBTreeMapColorProvider.ColorDistributionTypes.Exp,
+                Color.GREEN, Color.RED));
         for (final String key : colorProviders.keySet()) {
             final ColorProvider cp = colorProviders.get(key);
             panelLegend.add(cp.getLegendPanel(), key);
@@ -591,18 +636,14 @@ public class JTreeMapExample extends JFrame implements ActionListener {
     }
 }
 /*
- *                 ObjectLab is supporing JXTreeMap
+ * ObjectLab is supporing JXTreeMap
  * 
- * Based in London, we are world leaders in the design and development 
- * of bespoke applications for the securities financing markets.
+ * Based in London, we are world leaders in the design and development of bespoke applications for the securities
+ * financing markets.
  * 
- * <a href="http://www.objectlab.co.uk/open">Click here to learn more about us</a>
- *           ___  _     _           _   _          _
- *          / _ \| |__ (_) ___  ___| |_| |    __ _| |__
- *         | | | | '_ \| |/ _ \/ __| __| |   / _` | '_ \
- *         | |_| | |_) | |  __/ (__| |_| |__| (_| | |_) |
- *          \___/|_.__// |\___|\___|\__|_____\__,_|_.__/
- *                   |__/
+ * <a href="http://www.objectlab.co.uk/open">Click here to learn more about us</a> ___ _ _ _ _ _ / _ \| |__ (_) ___ ___|
+ * |_| | __ _| |__ | | | | '_ \| |/ _ \/ __| __| | / _` | '_ \ | |_| | |_) | | __/ (__| |_| |__| (_| | |_) |
+ * \___/|_.__// |\___|\___|\__|_____\__,_|_.__/ |__/
  *
- *                     www.ObjectLab.co.uk
+ * www.ObjectLab.co.uk
  */

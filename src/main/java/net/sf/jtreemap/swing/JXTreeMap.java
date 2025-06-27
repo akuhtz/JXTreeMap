@@ -207,7 +207,7 @@ public class JXTreeMap extends JComponent {
             g.fillRect(item.getX(), item.getY(), item.getWidth(), item.getHeight());
         } else {
             for (final Enumeration e = item.children(); e.hasMoreElements();) {
-                draw(g, (TreeMapNode) (e.nextElement()));
+                draw(g, (TreeMapNode) e.nextElement());
             }
         }
     }
@@ -281,7 +281,7 @@ public class JXTreeMap extends JComponent {
             drawLabel(g, displayedRoot);
         } else {
             for (final Enumeration e = displayedRoot.children(); e.hasMoreElements();) {
-                drawLabel(g, (TreeMapNode) (e.nextElement()));
+                drawLabel(g, (TreeMapNode) e.nextElement());
             }
         }
 
@@ -569,7 +569,7 @@ public class JXTreeMap extends JComponent {
         public void mouseMoved(final MouseEvent e) {
             if (getDisplayedRoot().children().hasMoreElements()) {
                 final TreeMapNode t = getDisplayedRoot().getActiveLeaf(e.getX(), e.getY());
-                if (t != null && !t.equals(getActiveLeaf())) {
+                if (t == null || !t.equals(getActiveLeaf())) {
                     setActiveLeaf(t);
                     repaint();
                 }
@@ -611,6 +611,12 @@ public class JXTreeMap extends JComponent {
                 }
                 repaint();
             }
+        }
+
+        @Override
+        public void mouseExited(final MouseEvent arg0) {
+            setActiveLeaf(null);
+            repaint();
         }
     }
 

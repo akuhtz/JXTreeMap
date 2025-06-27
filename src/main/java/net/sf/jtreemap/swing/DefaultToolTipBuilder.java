@@ -70,6 +70,7 @@ public class DefaultToolTipBuilder implements IToolTipBuilder, Serializable {
      * 
      * @see net.sf.jtreemap.swing.IToolTipBuilder#getToolTip()
      */
+    @Override
     public JToolTip getToolTip() {
         if (instance == null) {
             instance = new DefaultToolTip(this.jTreeMap, this.weightPrefix, this.valuePrefix, this.showWeight);
